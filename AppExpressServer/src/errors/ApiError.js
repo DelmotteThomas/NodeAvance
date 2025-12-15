@@ -8,25 +8,25 @@ class ApiError extends Error {
 }
 
 class ValidationError extends ApiError {
-    constructor(message) {
+    constructor(message = 'Mauvaise requête') {
         super(message, 400);
     }
 }
 
 class UnauthorizedError extends ApiError {
-    constructor(message) {
+    constructor(message  = 'Non autorisé , veuillez contacter une administrateur') {
         super(message, 401);
     }
 }
 
 class ForbiddenError extends ApiError {
-    constructor(message) {
+    constructor(message = 'Interdit') {
         super(message, 403);
     }
 }
 
 class NotFoundError extends ApiError {
-    constructor(message) {
+    constructor(message = 'Introuvable') {
         super(message, 404);
     }
 }

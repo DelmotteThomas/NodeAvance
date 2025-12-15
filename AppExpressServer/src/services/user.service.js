@@ -9,6 +9,8 @@ class UserService {
     return this.userModel.findAll();
   }
 
+  
+
   async create(data) {
     if (!data.name || !data.email) {
       const err = new Error("Invalid user data");

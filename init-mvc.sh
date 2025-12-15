@@ -21,7 +21,7 @@ touch src/server.js
 touch src/controllers/example.controller.js
 touch src/services/example.service.js
 touch src/models/example.model.js
-touch src/routes/example.routes.js
+touch src/routes/index.routes.js
 touch src/middlewares/logger.middleware.js
 touch src/errors/error.handler.js
 touch src/utils/helpers.js
