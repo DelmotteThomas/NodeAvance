@@ -1,26 +1,25 @@
-Pour tester les routes BACKEND 
+🧪 Tester un backend Node / Express (MVC)
 
-Utilisation de CURL 
+Ce document décrit **comment tester un backend** sans frontend, en utilisant **curl**  
+→ méthode recommandée pour valider les routes, les statuts HTTP et la configuration serveur.
 
+---
+
+## 🔧 Outil utilisé : `curl`
+
+> ⚠️ **Sous Windows (PowerShell / VS Code)**  
+> Utiliser **`curl.exe`** (et non `curl`).
+
+---
+
+## 📌 Commandes `curl` essentielles
+
+```bash
 curl URL                     # GET simple
-curl -I URL                  # headers + status
-curl -v URL                  # debug complet
-curl -X POST URL             # POST
+curl -I URL                  # Headers + status HTTP
+curl -v URL                  # Debug complet (verbose)
+curl -X POST URL             # Requête POST
 curl -H "Content-Type: application/json" URL
-$
-
-
-GET
-
-curl http://localhost:8080/api/todos
-
-POST / CREER UNE RESOURCE
-
-curl -X POST http://localhost:8080/api/todos -H "Content-Type: application/json" -d '{"title": "Mon titre de test"}'
-
-// Test si le serveur est UP
-
-curl http://localhost:8080
 
 
 example : 
@@ -29,22 +28,11 @@ Test si boostrap est UP
 
 curl.exe -I http://localhost:8080/bootstrap/css/bootstrap.min.css
 
+```
 
+## 📌 Commandes
 
-FLUX 
+Lancer le script  pour initier la structure du projet
 
-HTTP request
-   ↓
-routes
-   ↓
-controller
-   ↓
-service
-   ↓
-model
-   ↓
-service
-   ↓
-controller
-   ↓
-HTTP response
+chmod +x init-mvc.sh
+./init-mvc.sh

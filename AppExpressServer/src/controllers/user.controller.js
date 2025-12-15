@@ -1,11 +1,16 @@
-// controllers/user.controller.js
-const userService = require('../services/user.service');
+import { asyncHandler } from '../utils/asyncHandler.js';
+import userService from '../services/user.service.js';
 
-exports.getAll = async (req, res, next) => {
-  try {
+class UserController {
+  getAll = asyncHandler(async (req, res) => {
     const users = await userService.getAll();
     res.json(users);
-  } catch (err) {
-    next(err);
-  }
-};
+  });
+
+  create = asyncHandler(async (req, res) => {
+    const user = await userService.create(req.body);
+    res.status(201).json(user);
+  });
+}
+
+export default new UserController();

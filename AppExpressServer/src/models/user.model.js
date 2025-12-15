@@ -1,9 +1,14 @@
-// models/user.model.js
-const users = [];
+export default class UserModel {
+  constructor() {
+    this.users = [];
+  }
 
-exports.findAll = async () => users;
+  async findAll() {
+    return this.users;
+  }
 
-exports.create = async (data) => {
-  users.push(data);
-  return data;
-};
+  async create(user) {
+    this.users.push(user);
+    return user;
+  }
+}
