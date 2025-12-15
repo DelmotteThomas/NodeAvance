@@ -3,6 +3,8 @@ import userController from '../controllers/user.controller.js';
 
 const router = express.Router();
 
+app.use(express.json());
+
 router.get('/', (req, res) => {
   res.json({ status: 'API lancée avec succès' });
 });

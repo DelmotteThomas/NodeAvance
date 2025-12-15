@@ -1,4 +1,4 @@
-import { seedUsers } from '../seeds/users.seed.js';
+import { seedUsers } from "../seeds/users.seed.js";
 
 export default class UserModel {
   constructor() {
@@ -19,5 +19,20 @@ export default class UserModel {
 
     this.users.push(user);
     return user;
+  }
+  async findById(id) {
+    return this.users.find((user) => user.id === Number(id));
+  }
+
+  async deleteById(id) {
+    const index = this.users.findIndex((user) => user.id === Number(id));
+
+    if (index === -1) {
+      return null;
+    }
+
+    const deleted = this.users[index];
+    this.users.splice(index, 1);
+    return deleted;
   }
 }

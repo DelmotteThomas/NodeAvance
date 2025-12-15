@@ -18,6 +18,15 @@ class UserService {
 
     return this.userModel.create(data);
   }
+  async delete(id) {
+    const deletedUser = await this.userModel.deleteById(id);
+
+    if (!deletedUser) {
+      throw new NotFoundError('User not found');
+    }
+
+    return deletedUser;
+  }
 }
 
 export default new UserService();

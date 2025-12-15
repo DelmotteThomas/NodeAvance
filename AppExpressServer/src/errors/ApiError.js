@@ -13,6 +13,18 @@ class ValidationError extends ApiError {
     }
 }
 
+class UnauthorizedError extends ApiError {
+    constructor(message) {
+        super(message, 401);
+    }
+}
+
+class ForbiddenError extends ApiError {
+    constructor(message) {
+        super(message, 403);
+    }
+}
+
 class NotFoundError extends ApiError {
     constructor(message) {
         super(message, 404);
@@ -20,10 +32,11 @@ class NotFoundError extends ApiError {
 }
 
 
-
 export default 
 {
     ApiError,
     ValidationError,
+    UnauthorizedError,
+    ForbiddenError,
     NotFoundError,
 };
