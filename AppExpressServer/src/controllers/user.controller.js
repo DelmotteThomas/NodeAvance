@@ -1,6 +1,9 @@
 import { asyncHandler } from '../utils/asyncHandler.js';
 import userService from '../services/user.service.js';
 
+
+
+
 class UserController {
   getAll = asyncHandler(async (req, res) => {
     const users = await userService.getAll();

@@ -21,12 +21,9 @@ class NotFoundError extends ApiError {
 
 
 
-
-
-module.exports = 
+export default 
 {
     ApiError,
     ValidationError,
     NotFoundError,
-
 };

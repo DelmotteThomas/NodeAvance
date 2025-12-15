@@ -21,11 +21,11 @@ curl -v URL                  # Debug complet (verbose)
 curl -X POST URL             # Requête POST
 curl -H "Content-Type: application/json" URL
 
-
+```
 example : 
 
-Test si boostrap est UP
-
+Tester si boostrap est UP sur le projet
+```bash
 curl.exe -I http://localhost:8080/bootstrap/css/bootstrap.min.css
 
 ```

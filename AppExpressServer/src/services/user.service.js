@@ -1,4 +1,4 @@
-import UserModel from '../models/user.model.js';
+import UserModel from "../models/user.model.js";
 
 class UserService {
   constructor() {
@@ -10,8 +10,8 @@ class UserService {
   }
 
   async create(data) {
-    if (!data.name) {
-      const err = new Error('Le nom est requis');
+    if (!data.name || !data.email) {
+      const err = new Error("Invalid user data");
       err.status = 400;
       throw err;
     }
