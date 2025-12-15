@@ -6,7 +6,7 @@ class UserService {
   }
 
   async getAll() {
-    return this.userModel.findAll();
+    return await this.userModel.findAll();
   }
 
   
@@ -18,7 +18,7 @@ class UserService {
       throw err;
     }
 
-    return this.userModel.create(data);
+    return await this.userModel.create(data);
   }
   async delete(id) {
     const deletedUser = await this.userModel.deleteById(id);
