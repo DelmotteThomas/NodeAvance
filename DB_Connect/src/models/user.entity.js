@@ -15,6 +15,11 @@ module.exports = new EntitySchema({
     updatedAt: { updateDate: true, type: "datetime" },
   },
   relations: {
-    /* ... */
+    todos: {
+      target: "Todo",
+      type: "one-to-many",
+      inverseSide: "user",
+      cascade : true,
+    },
   },
 });

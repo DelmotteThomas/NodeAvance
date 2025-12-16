@@ -17,6 +17,7 @@ class TodoService {
         if (!data.title || data.title.trim() === "") {
             throw new ValidationError("Le titre est obligatoire");
         }
+        
         const newTodo = this.todoRepo.create(data);
         return await this.todoRepo.save(newTodo);
     }

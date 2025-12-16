@@ -10,7 +10,12 @@ const userController = {
     createUser: asyncHandler(async (req, res) => {
         const createdUser = await userService.create(req.body);
         res.status(201).json(createdUser);
-    })
+    }),
+
+    getUsersWithPendingTasks: asyncHandler(async (req, res) => {
+        const users = await userService.findUserWithPendingTasks();
+        res.status(200).json(users);
+    }),
 };
 
 module.exports = userController;

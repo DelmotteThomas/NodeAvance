@@ -21,6 +21,12 @@ class UserService{
         const newUser = this.userRepo.create(data);
         return await this.userRepo.save(newUser);
     }
+    async findUserWithPendingTasks() {
+        return await this.userRepo.createQueryBuilder("user")
+            .leftJoinAndSelect("user.todos", "todo")
+            .where("todo.completed = :status", { status: false })
+            .getMany();
+    }
 }
 
 const userService = new UserService();

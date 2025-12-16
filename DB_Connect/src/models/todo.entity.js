@@ -10,7 +10,13 @@ module.exports = new EntitySchema ({
         completed : { type : 'boolean', default : false}
     },
     relations : {
-        /* ... */
+        user : {
+            target : 'User',
+            type : 'many-to-one',
+            // Creation d'un colonne dans la Table de destination icic todo pour injecter la Fk. /  ou la contrainte
+            joinColumn : true, 
+            inverseSide : 'todos'
+        }
     }
 
 });

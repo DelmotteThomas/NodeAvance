@@ -24,9 +24,9 @@ curl -H "Content-Type: application/json" URL
 ```
 example : 
 
-Tester si boostrap est UP sur le projet
+Tester si le serveur est UP 
 ```bash
-curl.exe -I http://localhost:8080/bootstrap/css/bootstrap.min.css
+curl.exe -I http://localhost:8080
 
 ```
 
