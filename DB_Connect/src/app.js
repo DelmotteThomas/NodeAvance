@@ -7,6 +7,7 @@ const express = require('express');
 // on les les routes a une varibles
 const todoRoutes = require('./routes/todo.routes');
 const userRoutes = require('./routes/user.routes');
+const tagRoutes = require('./routes/tag.routes');
 
 // Middleware
 const logger = require('./middlewares/logger.middleware');
@@ -24,7 +25,8 @@ app.use(logger);
 app.use('/api/todos', todoRoutes);
 // User
 app.use('/api/users', userRoutes);
-
+// Tag
+app.use('/api/tags', tagRoutes); 
 
 // Gestion des erreurs
 

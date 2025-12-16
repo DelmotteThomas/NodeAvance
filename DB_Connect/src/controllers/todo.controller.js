@@ -11,7 +11,14 @@ const todoController = {
         
         const createdTodo = await todoService.create(req.body, req.params.userId);
         res.status(201).json(createdTodo);
-    })
+    }),
+
+    addTag: asyncHandler(async (req, res) => {
+        const { todoId } = req.params;
+        const { tagId } = req.body; 
+        const updatedTodo = await todoService.addTagToTodo(todoId, tagId);
+        res.status(200).json(updatedTodo);
+    }),
 };
 
 module.exports = todoController;
