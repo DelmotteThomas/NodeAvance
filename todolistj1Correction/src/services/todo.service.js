@@ -1,5 +1,5 @@
 const TodoModel = require('../models/todo.model');
-const { ValidationError } = require('../errors/ApiError');
+const { ValidationError } = require('../errors/apiError');
 
 class TodoService {
     async findAll() {
