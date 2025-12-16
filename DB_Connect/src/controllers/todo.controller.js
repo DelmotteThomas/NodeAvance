@@ -8,7 +8,8 @@ const todoController = {
     }),
 
     createTodo: asyncHandler(async (req, res) => {
-        const createdTodo = await todoService.create(req.body);
+        
+        const createdTodo = await todoService.create(req.body, req.params.userId);
         res.status(201).json(createdTodo);
     })
 };

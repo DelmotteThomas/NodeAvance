@@ -29,5 +29,6 @@ app.use('/api/users', userRoutes);
 // Gestion des erreurs
 
 app.use(errorHandler);
+console.log('APP START');
 
 module.exports = app;
