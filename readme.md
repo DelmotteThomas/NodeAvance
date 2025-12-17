@@ -5,7 +5,9 @@ Ce document décrit **comment tester un backend** sans frontend, en utilisant **
 
 ---
 
-## 🔧 Outil utilisé : `curl`
+## 🔧 Outil utilisé : `curl - PostMan` , `nodemon` , `dotenv`,  `dotreflect-metadatanv`, `typeorm`, 
+`sqlite3`, `helmet`,`cors`,`passport`
+
 
 > ⚠️ **Sous Windows (PowerShell / VS Code)**  
 > Utiliser **`curl.exe`** (et non `curl`).
@@ -30,9 +32,20 @@ curl.exe -I http://localhost:8080
 
 ```
 
-## 📌 Commandes
-
-Lancer le script  pour initier la structure du projet
+## 📌 Commandes bash
 
 chmod +x init-mvc.sh
 ./init-mvc.sh
+
+
+### 📌 Lien utile 
+
+TypeORM :
+https://typeorm.io/docs/guides/usage-with-javascript/
+
+PassPort : 
+https://www.passportjs.org/packages/passport-jwt/
+
+dotenv : 
+https://www.npmjs.com/package/dotenv
+

@@ -11,13 +11,4 @@ userRouter.get('/pending-tasks', userController.getUsersWithPendingTasks);
 userRouter.post('/:userId/todos', todoController.createTodo);
 
 
-// userRouter.post('/:userId/todos', (req, res) => {
-//   res.json({
-//     msg: 'ROUTE OK',
-//     params: req.params,
-//     body: req.body
-//   });
-// });
-
-
 module.exports = userRouter;
