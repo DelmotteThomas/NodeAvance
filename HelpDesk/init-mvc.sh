@@ -10,7 +10,7 @@ mkdir -p src/{config,controllers,errors,middlewares,models,routes,services,utils
 
 touch .env
 touch .gitignore
-touch README.md
+touch readme.md
 
 # Fichiers src
 touch src/config/index.js
