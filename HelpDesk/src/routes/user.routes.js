@@ -16,7 +16,7 @@ router.get('/profile', requireAuth, (req, res) => {
   res.json(req.user);
 });
 
-router.get('/admin-dashboard', requireAuth, requireRole('admin'), (req, res) => {
+router.get('/admin-dashboard', requireAuth, requireRole('SUPPORT'), (req, res) => {
   res.json({ message: "Bienvenue dans la zone d'administration" });
 });
 
