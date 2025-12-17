@@ -1,9 +1,16 @@
 const express = require('express');
-const userRouter = express.Router();
+const passport = require('passport');
 const userController = require('../controllers/user.controller');
 
-userRouter.get('/', userController.getAllUsers);
-userRouter.post('/', userController.createUser);
+const router = express.Router();
+
+// Route protégée
+router.get(
+  '/',
+  passport.authenticate('jwt', { session: false }),
+  userController.getAllUsers
+);
 
 
-module.exports = userRouter;
+
+module.exports = router;

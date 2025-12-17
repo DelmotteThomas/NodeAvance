@@ -2,7 +2,7 @@ require('reflect-metadata');
 require('dotenv').config();
 
 const app = require('./app');
-const AppDataSource = require('./config/data_source');
+const AppDataSource = require('./config/data-source');
 
 const PORT = process.env.PORT || 3000;
 

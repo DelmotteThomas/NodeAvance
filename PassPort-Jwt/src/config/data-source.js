@@ -3,10 +3,8 @@ const { DataSource } = require('typeorm');
 const UserEntity = require('../models/user.entity');
 
 
-
-
 const AppDataSource = new DataSource({
-  type: 'sqlite',
+  type: 'better-sqlite3',
   database: 'database.sqlite',
   synchronize: true, 
   logging: true,
