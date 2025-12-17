@@ -13,9 +13,7 @@ class UserService {
   }
 
   async create(data) {
-    if (!data.name || data.name.trim() === '') {
-      throw new ValidationError('Le nom est obligatoire');
-    }
+    
     if (!data.email || data.email.trim() === '') {
       throw new ValidationError("L'email est obligatoire");
     }
@@ -27,10 +25,9 @@ class UserService {
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
     const newUser = this.userRepo.create({
-      name: data.name,
       email: data.email,
       password: hashedPassword,
-      role: data.role || 'user',
+      role: data.role || 'CLIENT',
     });
 
     return await this.userRepo.save(newUser);
