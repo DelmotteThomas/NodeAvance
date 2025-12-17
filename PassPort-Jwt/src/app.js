@@ -1,22 +1,21 @@
-// Require coté back end
-// utilisation des vriable défini dans le .env
+// --- Dépendances ---
 require('dotenv').config();
-// Instancié express
 const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 const passport = require('passport');
 
+// --- Initialisation Passport ---
 require('./config/passport')(passport);
 
-// on lie les routes a une varibles
-
+// --- Import des Routeurs ---
 const userRoutes = require('./routes/user.routes');
 const authRoutes = require('./routes/auth.routes');
 
-// Middleware
+// --- Import des Middlewares ---
 const logger = require('./middlewares/logger.middleware');
-// Import de l'errorHandler ( gestion generative des erreurs)
+
+// --- Gestionnaire d'erreurs ---
 const errorHandler = require('./errors/errorHandler');
 
 const app = express();
@@ -28,16 +27,12 @@ app.use(helmet());
 app.use(cors());
 
 app.use(passport.initialize()); 
-// Définition des Routes 
 
-
-// User
+// --- Définition des Routes ---
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 
-
-// Gestion des erreurs
-
+// --- Gestionnaire d'erreurs (doit être le dernier middleware) ---
 app.use(errorHandler);
 
 module.exports = app;
