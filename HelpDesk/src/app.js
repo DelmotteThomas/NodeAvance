@@ -4,11 +4,11 @@ const express = require('express')
 const passport = require('passport');;
 const helmet = require('helmet');
 const cors = require('cors');
-const ApiError = require('./errors/apiError');
+const { ApiError } = require('./errors/apiError');
 
 
 // --- Initialisation Passport ---
-require('./config/passport'); 
+require('./config/passport');
 
 
 // --- Import des Routeurs ---
@@ -39,7 +39,7 @@ app.use(cors());
 // --- Définition des Routes ---
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
-app.use('/tickets', ticketRoutes);
+app.use('/api/tickets', ticketRoutes);
 
 app.use((req, res, next) => {
     next(new ApiError(404, 'Not Found'));

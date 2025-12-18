@@ -9,14 +9,17 @@ const userRepo = AppDataSource.getRepository(User);
 
 passport.use(
   // Jeton Local
-  new LocalStrategy(async (email, password, done) => {
-    try {
-      const user = await AuthService.validateUser(email, password);
-      return done(null, user);
-    } catch (err) {
-      return done(null, false, { message: err.message });
+  new LocalStrategy(
+    { usernameField: 'email' }, // <--- AJOUTEZ CETTE LIGNE
+    async (email, password, done) => {
+      try {
+        const user = await AuthService.validateUser(email, password); // Appelle maintenant la bonne méthode
+        return done(null, user);
+      } catch (err) {
+        return done(null, false, { message: err.message });
+      }
     }
-  })
+  )
 );
 // JEton JWT
 const jwtOptions = {

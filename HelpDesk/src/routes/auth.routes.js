@@ -14,5 +14,8 @@ router.post(
 // Register 
 router.post('/register', authController.register);
 
+// Refresh Token
+router.post('/refresh', authController.refresh);
+
 
 module.exports = router;

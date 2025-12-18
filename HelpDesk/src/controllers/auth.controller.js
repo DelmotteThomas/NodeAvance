@@ -1,56 +1,24 @@
-const jwt = require("jsonwebtoken");
-const asyncHandler = require("../utils/asyncHandler");
-const userService = require("../services/user.service");
+const AuthService = require('../services/auth.service');
+const asyncHandler = require('../utils/asyncHandler');
 
-
-const authController = {
-  login: asyncHandler(async (req, res) => {
-    const user = req.user; // fourni par passport local
-    const token = jwt.sign(
-  {
-    id: user.id,
-    email: user.email,
-    role: user.role,
-  },
-  process.env.JWT_SECRET,
-  { expiresIn: "1h" }
-    );
-
-    res.json({
-      token,
-      user: {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-      },
+class AuthController {
+    register = asyncHandler(async (req, res) => {
+        const { email, password, role } = req.body;
+        const user = await AuthService.register(email, password, role);
+        res.status(201).json({ status: 'success', data: { user } });
     });
-  }),
-  // REGISTER
-  register: asyncHandler(async (req, res) => {
-    // crée l'utilisateur (hash inclus dans le service)
-    const newUser = await userService.create(req.body);
 
-    // génère un token directement après inscription
-    const token = jwt.sign(
-      {
-        id: newUser.id,
-        email: newUser.email,
-        role: newUser.role,
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
-
-    res.status(201).json({
-      token,
-      user: {
-        id: newUser.id,
-        email: newUser.email,
-        role: newUser.role,
-      },
+    login = asyncHandler(async (req, res) => {
+        // Passport a déjà validé l'utilisateur et l'a attaché à req.user
+        const result = await AuthService.login(req.user);
+        res.status(200).json({ status: 'success', data: result });
     });
-  }),
 
-};
+    refresh = asyncHandler(async (req, res) => {
+        const { refreshToken } = req.body;
+        const tokens = await AuthService.refresh(refreshToken);
+        res.status(200).json({ status: 'success', data: tokens });
+    });
+}
 
-module.exports = authController;
+module.exports = new AuthController();

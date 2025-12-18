@@ -1,7 +1,7 @@
 const AppDataSource = require('../config/data-source');
 const Ticket = require('../models/ticket.entity');
 const Tag = require('../models/tag.entity');
-const ApiError = require('../errors/apiError');
+const {ApiError} = require('../errors/apiError');
 const { In } = require('typeorm');
 
 const ticketRepository = AppDataSource.getRepository(Ticket);
@@ -33,7 +33,21 @@ class TicketService {
         });
 
         await ticketRepository.save(ticket);
-        return ticket;
+        // Recharger le ticket avec les sélections spécifiques pour éviter le mot de passe
+        const createdTicket = await ticketRepository.findOne({
+            where: { id: ticket.id },
+            relations: ['user', 'tags'],
+            select: {
+                id: true,
+                title: true,
+                description: true,
+                status: true,
+                priority: true,
+                user: { id: true, email: true, role: true },
+                tags: { id: true, label: true }
+            }
+        });
+        return createdTicket;
     }
 
     async findAll(user, query) {
@@ -52,6 +66,15 @@ class TicketService {
             where,
             relations: ['user', 'tags'],
             order: { id: 'DESC' },
+            select: {
+                id: true,
+                title: true,
+                description: true,
+                status: true,
+                priority: true,
+                user: { id: true, email: true, role: true },
+                tags: { id: true, label: true }
+            }
         });
 
         return tickets;
@@ -65,7 +88,7 @@ class TicketService {
 
         ticket.status = status;
         await ticketRepository.save(ticket);
-        return ticket;
+        return ticket; // Le mot de passe n'est pas chargé ici par défaut, donc c'est sûr.
     }
 }
 

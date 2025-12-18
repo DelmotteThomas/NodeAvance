@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const AppDataSource = require('../config/data-source');
 const User = require('../models/user.entity');
-const ApiError = require('../errors/apiError')
+const { ApiError } = require('../errors/apiError');
 
 const userRepository = AppDataSource.getRepository(User);
 
@@ -39,19 +39,23 @@ class AuthService {
         return userWithoutPassword;
     }
 
-    async login(email, password) {
+    async validateUser(email, password) {
         const user = await userRepository.findOneBy({ email });
         if (!user) {
-            throw new ApiError(401, 'Invalid credentials');
+            throw new ApiError(401, 'Email ou mot de passe incorrect.');
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            throw new ApiError(401, 'Invalid credentials');
+            throw new ApiError(401, 'Email ou mot de passe incorrect.');
         }
+        return user;
+    }
 
+    async login(user) {
         const tokens = generateTokens(user);
-        return { user, ...tokens };
+        const { password: _, ...userWithoutPassword } = user;
+        return { user: userWithoutPassword, ...tokens };
     }
 
     async refresh(token) {
