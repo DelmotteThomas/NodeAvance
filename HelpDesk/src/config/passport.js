@@ -1,62 +1,40 @@
 const { Strategy: JwtStrategy, ExtractJwt } = require("passport-jwt");
 const LocalStrategy = require("passport-local").Strategy;
-const bcrypt = require("bcrypt");
 const AppDataSource = require("../config/data-source");
 const User = require("../models/user.entity");
+const AuthService = require("../services/auth.service");
+const passport = require("passport");
 
-module.exports = (passport) => {
-  passport.use(
+const userRepo = AppDataSource.getRepository(User);
 
-    // Jeton Local
-    new LocalStrategy(
-      {
-        usernameField: "email", // Indiquez à Passport quel champ sert d'identifiant
-        session: false, // Désactivez les sessions (car on fait une API REST)
-      },
-
-      async (email, password, done) => {
-        try {
-          const userRepo = AppDataSource.getRepository(User);
-          const user = await userRepo.findOneBy({ email });
-
-          if (!user) {
-            // Utilisateur non trouvé
-            return done(null, false, { message: "Identifiants incorrects" });
-          }
-          const match = await bcrypt.compare(password, user.password);
-          if (!match) {
-            // Mot de passe incorrect
-            return done(null, false, { message: "Identifiants incorrects" });
-          }
-          // Tout est valide => authentification réussie
-          return done(null, user);
-        } catch (err) {
-          // En cas d'erreur interne
-          return done(err);
-        }
-      }
-    )
-  );
-// JEton JWT 
-  const jwtOptions = {
-
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: process.env.JWT_SECRET,
-  };
-  passport.use(
-    new JwtStrategy(jwtOptions, async (payload, done) => {
-      try {
-        const userId = payload.id;
-        const userRepo = AppDataSource.getRepository(User);
-        const user = await userRepo.findOneBy({ id: userId });
-        if (user) {
-          return done(null, user);
-        } else {
-          return done(null, false);
-        }
-      } catch (err) {
-        return done(err, false);
-      }
-    })
-  );
+passport.use(
+  // Jeton Local
+  new LocalStrategy(async (email, password, done) => {
+    try {
+      const user = await AuthService.validateUser(email, password);
+      return done(null, user);
+    } catch (err) {
+      return done(null, false, { message: err.message });
+    }
+  })
+);
+// JEton JWT
+const jwtOptions = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: process.env.JWT_SECRET || "secret",
 };
+
+passport.use(
+  new JwtStrategy(jwtOptions, async (payload, done) => {
+    try {
+      const user = await userRepo.findOneBy({ id: payload.id });
+      if (user) {
+        return done(null, user);
+      } else {
+        return done(null, false);
+      }
+    } catch (err) {
+      return done(err, false);
+    }
+  })
+);
