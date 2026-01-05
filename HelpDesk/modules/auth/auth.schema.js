@@ -17,6 +17,7 @@ const registerSchema = z
 const loginSchema = z
   .object({
     email: z.string().email(),
+    password: z.string(),
   })
   .strict();
 // Pas de restriction de longueur sur le LOGIN pour ne pas aider un attaquant

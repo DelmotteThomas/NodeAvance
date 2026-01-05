@@ -26,9 +26,9 @@ curl -H "Content-Type: application/json" URL
 ```
 example : 
 
-Tester si le serveur est UP 
+Tester si le serveur est UP avec le bon port définis dans le .env
 ```bash
-curl.exe -I http://localhost:8080
+curl.exe -I http://localhost:3000
 
 ```
 
@@ -36,6 +36,12 @@ curl.exe -I http://localhost:8080
 ```bash
 chmod +x init-mvc.sh --> Donné les droits d'acces au fichier
 ./init-mvc.sh --> executer le int-mvc pour qu'il crée la structure MVC automatiquement avec les fichiers de base
+```
+
+
+```bash
+npm audit
+npm audit fix
 ```
 
 ### 📌 Lien utile 
@@ -53,3 +59,6 @@ zod :
 https://www.npmjs.com/package/zod
 https://zod.dev/
 
+AUDIT pour tester les librairies :
+
+https://docs.npmjs.com/cli/v9/commands/npm-audit

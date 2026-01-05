@@ -5,7 +5,9 @@ const passport = require('passport');;
 const helmet = require('helmet');
 const cors = require('cors');
 const { ApiError } = require('./errors/apiError');
+const {globalLimiter} = require('./middlewares/rateLimiter');
 
+// pour gerer les parms URL ( éviter les double id par exemple)
 const hpp = require('hpp');
 
 
@@ -48,14 +50,21 @@ const app = express();
 
 app.use(logger);
 
-app.use(express.json());
-app.use(passport.initialize());
-
 // --- Middleware de sécurité ---
 app.use(helmet());
 // Utiliser les option Cors pour proteger le HEADER des attaques extérieur
 app.use(cors(corsOption));
+app.use(globalLimiter);
+
+// Parser JSON
+app.use(express.json());
+app.use(passport.initialize());
+
+
+// A placer  avant les routes mais après le body parser ! pour nettoyer toutes les requetes entrantes
 app.use(hpp())
+
+
 
 
 
