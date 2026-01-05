@@ -1,16 +1,27 @@
 // --- Dépendances ---
+// Utilisation des fichier . env
 require('dotenv').config();
-const express = require('express')
-const passport = require('passport');;
-const helmet = require('helmet');
-const cors = require('cors');
-const { ApiError } = require('./errors/apiError');
-const {globalLimiter} = require('./middlewares/rateLimiter');
-const sanitizer = require('./middlewares/sanitizer');
+// serveur
+const express = require('express');
+// Gerer l'authentification
+const passport = require('passport');
 
+// Protection du HEADER
+const helmet = require('helmet');
+
+// Securisation 
+const cors = require('cors');
+
+// Gestion des erreurs 
+const { ApiError } = require('./errors/apiError');
+
+// Gestion des DoS / tentative de connexion 
+const {globalLimiter} = require('./middlewares/rateLimiter');
+// 
+const sanitizer = require('./middlewares/sanitizer');
+const morgan = require ('morgan');
 // pour gerer les parms URL ( éviter les double id par exemple)
 const hpp = require('hpp');
-
 
 // --- Initialisation Passport ---
 require('./config/passport');
@@ -18,8 +29,6 @@ require('./config/passport');
 // Initialisation de Cors
 // Liste des domaines autorisés
 const whitelist = ['http://localhost:5500', 'http://localhost:4200', 'http://localhost:3000'];
-
-
 // Origin c'est ce qu'envoie un serv a un navigateur
 const corsOption = {
     origin: function (origin, callback){
@@ -47,6 +56,13 @@ const logger = require('./middlewares/logger.middleware');
 const errorHandler = require('./errors/errorHandler');
 
 const app = express();
+
+// -- Loging Espion --
+// Placer tout en haut, avant Helmet / Cors / et les routes
+// Placez-le TOUT EN HAUT, avant Helmet, Cors, et les Routes. // Le format 'dev' est coloré et concis pour le développement. 
+// Le format 'combined' est standard pour la prod (Apache style).
+
+app.use(morgan('dev'));
 app.use(express.json());
 app.use(sanitizer);
 // Stockage temporaire en mémoire (pour la démo)
@@ -60,10 +76,10 @@ res.json({ status: 'success' }); });
 app.use(logger);
 
 // --- Middleware de sécurité ---
-//app.use(helmet());
+app.use(helmet());
 // Utiliser les option Cors pour proteger le HEADER des attaques extérieur
-//app.use(cors(corsOption));
-//app.use(globalLimiter);
+app.use(cors(corsOption));
+app.use(globalLimiter);
 
 // Parser JSON
 
