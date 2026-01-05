@@ -10,6 +10,22 @@ const { ApiError } = require('./errors/apiError');
 // --- Initialisation Passport ---
 require('./config/passport');
 
+// Initialisation de Cors
+// Liste des domaines autorisés
+const whitelist = ['http://localhost:5500', 'http://localhost:4200'];
+
+const corsOption = {
+    origin: function (origin, callback){
+        if (whitelist.indexOf(origin) !== -1 || !origin) {
+            callback(null, true);
+        } else {
+            callback(new Error('Bloqué par CORS, domaine non autorisé'));
+        }
+    },
+    methods : ['GET','POST','PUT','DELETE'], // Verbe HTML autorisé
+    allowedHeaders : ['Content-Type', 'Authorization'] // Header autorisés
+};
+
 
 // --- Import des Routeurs ---
 const userRoutes = require('./routes/user.routes');
@@ -29,6 +45,8 @@ app.use(logger);
 
 app.use(express.json());
 app.use(passport.initialize());
+// Utiliser les option Cors pour proteger le HEADER des attaques extérieur
+app.use(cors(corsOption));
 
 // --- Middleware de sécurité ---
 app.use(helmet());
