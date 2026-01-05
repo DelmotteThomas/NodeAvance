@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hacker Board (XSS Demo)</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #eee;
+      padding: 40px;
+    }
+
+    h1 {
+      color: #f44336;
+    }
+
+    textarea {
+      width: 100%;
+      height: 80px;
+      font-size: 16px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .messages {
+      margin-top: 30px;
+      border-top: 1px solid #444;
+      padding-top: 20px;
+    }
+
+    .message {
+      background: #222;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .date {
+      font-size: 12px;
+      color: #999;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>💀 Hacker Board (XSS Demo)</h1>
+
+  <p>
+    Ce frontend est volontairement <strong>vulnérable</strong>.
+    Tout ce qui est envoyé est affiché via <code>innerHTML</code>.
+  </p>
+
+  <textarea id="content" placeholder="Écris un message ou un payload XSS..."></textarea>
+  <br />
+  <button onclick="sendMessage()">Envoyer</button>
+
+  <div class="messages" id="messages"></div>
+
+  <script>
+    alert('JS chargé');
+    const API_URL = '/messages';
+
+    async function fetchMessages() {
+      const res = await fetch(API_URL);
+      const data = await res.json();
+
+      const container = document.getElementById('messages');
+      container.innerHTML = '';
+
+      data.forEach(msg => {
+        const div = document.createElement('div');
+        div.className = 'message';
+
+        // ❌ FAILLE XSS : innerHTML sans sanitization
+        div.innerHTML = `
+          <div>${msg.content}</div>
+          <div class="date">${new Date(msg.date).toLocaleString()}</div>
+        `;
+
+        container.appendChild(div);
+      });
+    }
+
+    async function sendMessage() {
+      const content = document.getElementById('content').value;
+
+      await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ content })
+      });
+
+      document.getElementById('content').value = '';
+      fetchMessages();
+    }
+
+    // Chargement initial
+    fetchMessages();
+  </script>
+
+</body>
+</html>
