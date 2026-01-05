@@ -49,3 +49,7 @@ https://www.passportjs.org/packages/passport-jwt/
 dotenv : 
 https://www.npmjs.com/package/dotenv
 
+zod : 
+https://www.npmjs.com/package/zod
+https://zod.dev/
+

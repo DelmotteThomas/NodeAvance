@@ -6,6 +6,8 @@ const helmet = require('helmet');
 const cors = require('cors');
 const { ApiError } = require('./errors/apiError');
 
+const hpp = require('hpp');
+
 
 // --- Initialisation Passport ---
 require('./config/passport');
@@ -14,6 +16,8 @@ require('./config/passport');
 // Liste des domaines autorisés
 const whitelist = ['http://localhost:5500', 'http://localhost:4200'];
 
+
+// Origin c'est ce qu'envoie un serv a un navigateur
 const corsOption = {
     origin: function (origin, callback){
         if (whitelist.indexOf(origin) !== -1 || !origin) {
@@ -22,6 +26,7 @@ const corsOption = {
             callback(new Error('Bloqué par CORS, domaine non autorisé'));
         }
     },
+    credentials:true, // Autoriser les cookies
     methods : ['GET','POST','PUT','DELETE'], // Verbe HTML autorisé
     allowedHeaders : ['Content-Type', 'Authorization'] // Header autorisés
 };
@@ -45,12 +50,12 @@ app.use(logger);
 
 app.use(express.json());
 app.use(passport.initialize());
-// Utiliser les option Cors pour proteger le HEADER des attaques extérieur
-app.use(cors(corsOption));
 
 // --- Middleware de sécurité ---
 app.use(helmet());
-app.use(cors());
+// Utiliser les option Cors pour proteger le HEADER des attaques extérieur
+app.use(cors(corsOption));
+app.use(hpp())
 
 
 
