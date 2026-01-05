@@ -33,10 +33,10 @@ curl.exe -I http://localhost:8080
 ```
 
 ## 📌 Commandes bash
-
+```bash
 chmod +x init-mvc.sh --> Donné les droits d'acces au fichier
 ./init-mvc.sh --> executer le int-mvc pour qu'il crée la structure MVC automatiquement avec les fichiers de base
-
+```
 
 ### 📌 Lien utile 
 
