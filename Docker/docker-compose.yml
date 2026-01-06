@@ -1,0 +1,38 @@
+
+services:
+  redis-server:
+    image: redis:alpine
+    container_name: redis-server
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    restart: always
+    networks:
+      - mon-reseau-interne
+
+  redis-interface:
+    image: rediscommander/redis-commander:latest
+    container_name: redis-interface
+    restart: always
+    ports:
+      - "${PORT_INTERFACE}:8081"
+    environment:
+      - REDIS_HOSTS=local:redis-server:6379
+    depends_on:
+      - redis-server
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - mon-reseau-interne
+
+volumes:
+  redis_data:
+
+networks:
+  mon-reseau-interne:
+    driver: bridge
