@@ -41,3 +41,26 @@ passport.use(
     }
   })
 );
+
+// 🔥 OBLIGATOIRE POUR LES SESSIONS (REDIS)
+
+// Sauvegarde dans la session (Redis)
+passport.serializeUser((user, done) => {
+  done(null, user.id); // on stocke UNIQUEMENT l'id
+});
+
+// Reconstruction depuis la session
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await userRepo.findOneBy({ id });
+    if (!user) {
+      return done(null, false);
+    }
+    done(null, user);
+  } catch (err) {
+    done(err);
+  }
+});
+
+module.exports = passport;
+

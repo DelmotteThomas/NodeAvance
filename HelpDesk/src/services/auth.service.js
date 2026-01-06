@@ -1,24 +1,24 @@
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+//const jwt = require('jsonwebtoken');
 const AppDataSource = require('../config/data-source');
 const User = require('../models/user.entity');
 const { ApiError } = require('../errors/apiError');
 
 const userRepository = AppDataSource.getRepository(User);
 
-const generateTokens = (user) => {
-    const accessToken = jwt.sign(
-        { id: user.id, role: user.role },
-        process.env.JWT_SECRET || 'secret',
-        { expiresIn: '15m' }
-    );
-    const refreshToken = jwt.sign(
-        { id: user.id },
-        process.env.JWT_REFRESH_SECRET || 'refresh_secret',
-        { expiresIn: '7d' }
-    );
-    return { accessToken, refreshToken };
-};
+// const generateTokens = (user) => {
+//     const accessToken = jwt.sign(
+//         { id: user.id, role: user.role },
+//         process.env.JWT_SECRET || 'secret',
+//         { expiresIn: '15m' }
+//     );
+//     const refreshToken = jwt.sign(
+//         { id: user.id },
+//         process.env.JWT_REFRESH_SECRET || 'refresh_secret',
+//         { expiresIn: '7d' }
+//     );
+//     return { accessToken, refreshToken };
+// };
 
 class AuthService {
     async register(email, password, role) {
@@ -52,24 +52,24 @@ class AuthService {
         return user;
     }
 
-    async login(user) {
-        const tokens = generateTokens(user);
-        const { password: _, ...userWithoutPassword } = user;
-        return { user: userWithoutPassword, ...tokens };
-    }
+    // async login(user) {
+    //     const tokens = generateTokens(user);
+    //     const { password: _, ...userWithoutPassword } = user;
+    //     return { user: userWithoutPassword, ...tokens };
+    //}
 
-    async refresh(token) {
-        try {
-            const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET || 'refresh_secret');
-            const user = await userRepository.findOneBy({ id: decoded.id });
-            if (!user) {
-                throw new ApiError(401, 'User not found');
-            }
-            return generateTokens(user);
-        } catch (error) {
-            throw new ApiError(403, 'Invalid refresh token');
-        }
-    }
+    // async refresh(token) {
+    //     try {
+    //         const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET || 'refresh_secret');
+    //         const user = await userRepository.findOneBy({ id: decoded.id });
+    //         if (!user) {
+    //             throw new ApiError(401, 'User not found');
+    //         }
+    //         return generateTokens(user);
+    //     } catch (error) {
+    //         throw new ApiError(403, 'Invalid refresh token');
+    //     }
+    // }
 }
 
 module.exports = new AuthService();

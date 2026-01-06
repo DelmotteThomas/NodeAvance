@@ -5,26 +5,25 @@ require('dotenv').config();
 const express = require('express');
 // Gerer l'authentification
 const passport = require('passport');
-
 // Protection du HEADER
 const helmet = require('helmet');
-
 // Securisation 
 const cors = require('cors');
-
 // Gestion des erreurs 
 const { ApiError } = require('./errors/apiError');
-
 // Gestion des DoS / tentative de connexion 
 const {globalLimiter} = require('./middlewares/rateLimiter');
-// 
+// Nettoyage des requetes avant d'envoyer au Server Empeche les injections
 const sanitizer = require('./middlewares/sanitizer');
+
 const morgan = require ('morgan');
 // pour gerer les parms URL ( éviter les double id par exemple)
 const hpp = require('hpp');
 
-// Lancement de la connexion Redis
-require('./config/redis');
+const session = require('express-session');
+const { RedisStore } = require('connect-redis');
+const redis = require('./config/redis');
+
 
 // --- Initialisation Passport ---
 require('./config/passport');
@@ -68,13 +67,32 @@ const app = express();
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(sanitizer);
-// Stockage temporaire en mémoire (pour la démo)
+app.use(session({
+  store: new RedisStore({
+    client: redis,
+    prefix: 'sess:',
+  }),
+  secret: process.env.JWT_SECRET || 'votre_secret_super_securise',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: false,
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000,
+  },
+}));
+
+// Stockage temporaire en mémoire (pour la démo HACKER-BOARD)
 const messages = [];
 app.get('/messages', (req, res) => res.json(messages));
 app.post('/messages', (req, res) => { 
 // Faille : On stocke directement ce qu'on reçoit sans nettoyer
 const { content } = req.body; messages.push({ content, date: new Date() });
 res.json({ status: 'success' }); });
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 
 app.use(logger);
 
@@ -86,7 +104,6 @@ app.use(globalLimiter);
 
 // Parser JSON
 
-//app.use(passport.initialize());
 
 
 // A placer  avant les routes mais après le body parser ! pour nettoyer toutes les requetes entrantes
@@ -102,18 +119,14 @@ app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/tickets', ticketRoutes);
 
-// Routes de TEST
-app.get('/test-hpp', (req, res) => { console.log("Paramètre id reçu :", req.query.id); res.send(req.query.id); });
 
 app.use((req, res, next) => {
     next(new ApiError(404, 'Not Found'));
 });
 
 
-
 // --- Gestionnaire d'erreurs (doit être le dernier middleware) ---
 app.use(errorHandler);
-
 
 
 

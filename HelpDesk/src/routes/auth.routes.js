@@ -30,9 +30,9 @@ router.post(
 );
 
 // Refresh Token
-router.post(
-  "/refresh",
-  authController.refresh
-);
+// router.post(
+//   "/refresh",
+//   authController.refresh
+// );
 
 module.exports = router;
