@@ -26,6 +26,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node src/server.js",
+    "bench": "node src/utils/benchmarks.js",
     "dev": "nodemon src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -33,6 +34,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "autocannon": "^8.0.0",
     "nodemon": "^3.1.11"
   }
 }

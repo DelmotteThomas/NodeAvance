@@ -50,6 +50,7 @@ const corsOption = {
 const userRoutes = require('./routes/user.routes');
 const authRoutes = require('./routes/auth.routes');
 const ticketRoutes = require('./routes/ticket.routes');
+const statsRoutes = require('./routes/stats.routes');
 
 // --- Import des Middlewares ---
 const logger = require('./middlewares/logger.middleware');
@@ -118,6 +119,7 @@ app.use(express.static('public'));
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/tickets', ticketRoutes);
+app.use('/api/stats', statsRoutes);
 
 
 app.use((req, res, next) => {
