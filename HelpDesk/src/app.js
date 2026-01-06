@@ -23,6 +23,9 @@ const morgan = require ('morgan');
 // pour gerer les parms URL ( éviter les double id par exemple)
 const hpp = require('hpp');
 
+// Lancement de la connexion Redis
+require('./config/redis');
+
 // --- Initialisation Passport ---
 require('./config/passport');
 

@@ -4,19 +4,22 @@ const UserEntity = require('../models/user.entity');
 const TicketEntity = require('../models/ticket.entity');
 const TagEntity = require('../models/tag.entity');
 
-
-
 const AppDataSource = new DataSource({
-  type: 'better-sqlite3',
-  database: 'database.sqlite',
-  synchronize: true, 
+  type: 'postgres',
+  host: process.env.DB_HOST,
+  port: Number(process.env.DB_PORT),
+  username: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME,
+
+  synchronize: true, // ⚠️ DEV UNIQUEMENT
   logging: true,
+
   entities: [
     UserEntity,
     TagEntity,
     TicketEntity
-  ]
-
+  ],
 });
 
 module.exports = AppDataSource;
