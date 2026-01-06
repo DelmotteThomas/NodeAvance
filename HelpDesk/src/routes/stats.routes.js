@@ -8,7 +8,7 @@ let fakeSalesData = {
   lastUpdated: new Date(),
 };
 // Route avec CACHE
-router.get('/', cache(60), async (req, res) => {
+router.get('/stats', cache(60), async (req, res) => {
   // Simulation d'un calcul lourd (2 secondes)
   await new Promise(resolve => setTimeout(resolve, 2000));
 
@@ -16,6 +16,15 @@ router.get('/', cache(60), async (req, res) => {
     ...fakeSalesData,
     generatedAt: new Date().toISOString(),
   });
+});
+
+router.post('/sales', async (req, res) => {
+  fakeSalesData.totalSales += 100;
+  fakeSalesData.lastUpdated = new Date();
+
+  await redis.del('cache:/api/stats');
+
+  res.json({ message: 'Vente ajoutée, cache invalidé' });
 });
 
 // Route sans CACHE
