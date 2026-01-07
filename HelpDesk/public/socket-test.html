@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>HelpDesk – Socket Test</title>
+
+  <!-- Socket.IO CDN -->
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  <script src="/socket-test.js" defer></script>
+
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      margin-top: 0;
+      text-align: center;
+      color: #333;
+    }
+
+    button {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background: #1976d2;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+
+    button:hover {
+      background: #1565c0;
+    }
+
+    pre {
+      background: #111;
+      color: #00ff9c;
+      padding: 12px;
+      border-radius: 4px;
+      height: 200px;
+      overflow-y: auto;
+      font-size: 14px;
+    }
+
+    .hint {
+      text-align: center;
+      font-size: 13px;
+      color: #666;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>HelpDesk – Socket Test</h1>
+
+    <button id="pingBtn">📡 Ping serveur</button>
+
+    <pre id="log"></pre>
+
+    <div class="hint">
+      DelTo - Testing d'un WebSocket • Ping | Pong • Broadcast
+    </div>
+  </div>
+
+</body>
+</html>

@@ -98,7 +98,29 @@ app.use(passport.session());
 app.use(logger);
 
 // --- Middleware de sécurité ---
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+
+        scriptSrc: [
+          "'self'",
+          "https://cdn.socket.io",
+        ],
+
+        connectSrc: [
+          "'self'",
+          "http://localhost:3000",
+          "ws://localhost:3000",
+        ],
+
+        styleSrc: ["'self'", "'unsafe-inline'"],
+      },
+    },
+  })
+);
+
 // Utiliser les option Cors pour proteger le HEADER des attaques extérieur
 app.use(cors(corsOption));
 app.use(globalLimiter);
