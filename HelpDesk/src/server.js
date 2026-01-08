@@ -1,43 +1,71 @@
-require('reflect-metadata');
-require('dotenv').config();
+require("reflect-metadata");
+require("dotenv").config();
 
-const http = require('http');
-const app = require('./app');
-const AppDataSource = require('./config/data-source');
-const { Server } = require('socket.io');
+const http = require("http");
+const passport = require("passport");
+const app = require("./app");
+const AppDataSource = require("./config/data-source");
+const { Server } = require("socket.io");
+
+const sessionMiddleware = require("./middlewares/session.middleware");
 
 const PORT = process.env.PORT || 3000;
 
+// utilitaire express → socket.io
+const wrap = (middleware) => (socket, next) =>
+  middleware(socket.request, {}, next);
+
 AppDataSource.initialize()
   .then(() => {
-    console.log('Base de données connectée');
+    console.log("Base de données connectée");
 
     const server = http.createServer(app);
 
     const io = new Server(server, {
       cors: {
-        origin: '*', // le navigateur A LE DROIT de se connecter
+        // ❌ Ne pas utiliser "*" avec credentials: true
+        // ✅ Utiliser l'URL exacte de ton interface de test
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST"],
+        credentials: true,
       },
     });
 
-    io.on('connection', (socket) => {
-      console.log(`🟢 Client connecté : ${socket.id}`);
-      
-      socket.on('my_ping', (data) => {
-    console.log('📩 Ping reçu :', data);
+    // ✅ MIDDLEWARES SOCKET (ORDRE CRUCIAL)
+    io.use(wrap(sessionMiddleware));
+    io.use(wrap(passport.initialize()));
+    io.use(wrap(passport.session()));
 
-    // Réponse UNIQUEMENT à ce client
-     socket.emit('my_pong', {
-       response: 'Bien reçu, Roger !',
-     });
-    // Réponse a tous les client 
-    io.emit('broadcast_msg', {
-    message: `📢 Quelqu'un a pingué ! C'est ${socket.id}`
-  });
-  });
+    // ✅ GUARD D'AUTH SOCKET
+    io.use((socket, next) => {
+      if (socket.request.user) return next();
+      next(new Error("Unauthorized"));
+    });
 
-      socket.on('disconnect', () => {
-        console.log(`🔴 Client déconnecté : ${socket.id}`);
+    // ✅ CONNECTION
+    io.on("connection", (socket) => {
+      const user = socket.request.user;
+
+      // Log de connexion sécurisé
+      console.log(`👤 Utilisateur ${user.email} (Rôle: ${user.role}) connecté`);
+
+      socket.on("my_ping", (data) => {
+        console.log(`📨 Ping de ${user.email} :`, data);
+
+        // Réponse directe au client qui a cliqué
+        socket.emit("my_pong", {
+          response: `Pong reçu ! Bonjour ${user.email}.`,
+        });
+
+        // Broadcast à TOUS les autres (pour simuler une notification de ticket par exemple)
+        // On le met ici pour qu'il ne se déclenche que lors du clic
+        socket.broadcast.emit("broadcast_msg", {
+          message: `📢 ${user.email} (${user.role}) vient d'envoyer un signal.`,
+        });
+      });
+
+      socket.on("disconnect", () => {
+        console.log(`🔴 ${user.email} a quitté le socket.`);
       });
     });
 
@@ -46,6 +74,6 @@ AppDataSource.initialize()
     });
   })
   .catch((error) => {
-    console.error('Erreur de connexion à la BaseDeDonnee', error);
+    console.error("Erreur DB", error);
     process.exit(1);
   });

@@ -20,10 +20,7 @@ const morgan = require ('morgan');
 // pour gerer les parms URL ( éviter les double id par exemple)
 const hpp = require('hpp');
 
-const session = require('express-session');
-const { RedisStore } = require('connect-redis');
-const redis = require('./config/redis');
-
+const sessionMiddleware = require('./middlewares/session.middleware');
 
 // --- Initialisation Passport ---
 require('./config/passport');
@@ -44,6 +41,7 @@ const corsOption = {
     methods : ['GET','POST','PUT','DELETE'], // Verbe HTML autorisé
     allowedHeaders : ['Content-Type', 'Authorization'] // Header autorisés
 };
+
 
 
 // --- Import des Routeurs ---
@@ -68,20 +66,7 @@ const app = express();
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(sanitizer);
-app.use(session({
-  store: new RedisStore({
-    client: redis,
-    prefix: 'sess:',
-  }),
-  secret: process.env.JWT_SECRET || 'votre_secret_super_securise',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: false,
-    httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000,
-  },
-}));
+app.use(sessionMiddleware);
 
 // Stockage temporaire en mémoire (pour la démo HACKER-BOARD)
 const messages = [];
@@ -93,46 +78,19 @@ res.json({ status: 'success' }); });
 
 app.use(passport.initialize());
 app.use(passport.session());
-
-
 app.use(logger);
 
 // --- Middleware de sécurité ---
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-
-        scriptSrc: [
-          "'self'",
-          "https://cdn.socket.io",
-        ],
-
-        connectSrc: [
-          "'self'",
-          "http://localhost:3000",
-          "ws://localhost:3000",
-        ],
-
-        styleSrc: ["'self'", "'unsafe-inline'"],
-      },
-    },
-  })
-);
-
+// app.use(
+//   helmet()
+// );
 // Utiliser les option Cors pour proteger le HEADER des attaques extérieur
 app.use(cors(corsOption));
 app.use(globalLimiter);
-
 // Parser JSON
-
-
 
 // A placer  avant les routes mais après le body parser ! pour nettoyer toutes les requetes entrantes
 app.use(hpp())
-
-
 
 // Déservir les fichiers statiques
 app.use(express.static('public'));
