@@ -16,6 +16,11 @@ module.exports = new EntitySchema({
       inverseSide: "user",
       cascade : true,
     },
+    messages: {
+      target: "Message",
+      type: "one-to-many",
+      inverseSide: "sender", 
+    },
   },
   
 });

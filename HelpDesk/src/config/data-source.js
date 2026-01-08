@@ -3,6 +3,7 @@ const { DataSource } = require('typeorm');
 const UserEntity = require('../models/user.entity');
 const TicketEntity = require('../models/ticket.entity');
 const TagEntity = require('../models/tag.entity');
+const MessageEntity = require('../models/message.entity');
 
 const AppDataSource = new DataSource({
   type: 'postgres',
@@ -18,7 +19,8 @@ const AppDataSource = new DataSource({
   entities: [
     UserEntity,
     TagEntity,
-    TicketEntity
+    TicketEntity,
+    MessageEntity
   ],
 });
 

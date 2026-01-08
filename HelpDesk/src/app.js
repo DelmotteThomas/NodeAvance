@@ -101,6 +101,21 @@ app.use('/api/auth', authRoutes);
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/stats', statsRoutes);
 
+// Route temporaire pour tester 
+
+app.post('/api/admin/notify/:userId', (req, res) => {
+    const io = req.app.get('io'); // Récupération sécurisée
+    const targetUserId = req.params.userId;
+    const { message } = req.body;
+
+    // Attention : utilise le même séparateur partout (ici underscore _)
+    io.to(`user_${targetUserId}`).emit('notification', {
+        type: 'private',
+        text: message,
+        from: 'System Admin'
+    });
+    res.json({ status: 'Notification envoyée' });
+});
 
 app.use((req, res, next) => {
     next(new ApiError(404, 'Not Found'));
@@ -109,7 +124,5 @@ app.use((req, res, next) => {
 
 // --- Gestionnaire d'erreurs (doit être le dernier middleware) ---
 app.use(errorHandler);
-
-
 
 module.exports = app;
