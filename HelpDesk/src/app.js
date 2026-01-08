@@ -49,6 +49,7 @@ const userRoutes = require('./routes/user.routes');
 const authRoutes = require('./routes/auth.routes');
 const ticketRoutes = require('./routes/ticket.routes');
 const statsRoutes = require('./routes/stats.routes');
+const chatRoutes = require('./routes/chat.routes');
 
 // --- Import des Middlewares ---
 const logger = require('./middlewares/logger.middleware');
@@ -69,12 +70,12 @@ app.use(sanitizer);
 app.use(sessionMiddleware);
 
 // Stockage temporaire en mémoire (pour la démo HACKER-BOARD)
-const messages = [];
-app.get('/messages', (req, res) => res.json(messages));
-app.post('/messages', (req, res) => { 
-// Faille : On stocke directement ce qu'on reçoit sans nettoyer
-const { content } = req.body; messages.push({ content, date: new Date() });
-res.json({ status: 'success' }); });
+// const messages = [];
+// app.get('/messages', (req, res) => res.json(messages));
+// app.post('/messages', (req, res) => { 
+// // Faille : On stocke directement ce qu'on reçoit sans nettoyer
+// const { content } = req.body; messages.push({ content, date: new Date() });
+// res.json({ status: 'success' }); });
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -100,6 +101,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/api/messages', chatRoutes);
 
 // Route temporaire pour tester 
 

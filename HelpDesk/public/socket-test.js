@@ -4,6 +4,8 @@ const sendBtn = document.getElementById("sendBtn");
 const messageInput = document.getElementById("messageInput");
 const pingBtn = document.getElementById("pingBtn");
 const statusIndicator = document.getElementById("status-indicator");
+let currentUserEmail = "";
+
 /**
  * Fonction pour ajouter une bulle au chat
  * side = 'me' (droite/vert) ou 'others' (gauche/blanc)
@@ -30,22 +32,51 @@ function appendBubble(data, side) {
   log.scrollTop = log.scrollHeight; // Scroll automatique vers le bas
 }
 
-// 1. Connexion au serveur
+async function loadHistory() {
+    try {
+        const response = await fetch('/api/messages/general');
+        const messages = await response.json();
+        
+        console.log("Historique chargé :", messages);
+
+        messages.forEach(msg => {
+            // On vérifie si l'expéditeur est l'utilisateur actuel
+            // msg.sender.email vient de la relation 'sender' définie dans ton entité
+            const side = (msg.sender && msg.sender.email === currentUserEmail) ? 'me' : 'others';
+            
+            appendBubble({
+                content: msg.content,
+                from: msg.sender ? msg.sender.email : 'Anonyme',
+                time: new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            }, side);
+        });
+    } catch (err) {
+        console.error("Erreur lors du chargement de l'historique:", err);
+    }
+}
+
+// Connexion au serveur
 const socket = io("http://localhost:3000", {
   withCredentials: true,
   transports: ["websocket", "polling"],
 });
 
-// 2. Événement de connexion
+// Événement de connexion
 socket.on("connect", () => {
   statusIndicator.textContent = "✅ En ligne";
   statusIndicator.classList.remove("offline"); // Optionnel : pour le style CSS
   console.log("Connecté au serveur avec l'ID socket :", socket.id);
 });
+socket.on("auth_success", (data) => {
+    currentUserEmail = data.email; // On stocke l'email reçu du serveur
+    console.log("Connecté en tant que :", currentUserEmail);
+    
+    // Une fois qu'on sait qui on est, on charge l'historique
+    loadHistory(); 
+});
 // Quand la connexion est perdue (serveur coupé ou crash)
 socket.on("disconnect", (reason) => {
   statusIndicator.textContent = "❌ Hors ligne";
-  statusIndicator.style.backgroundColor = "red"; // Changement visuel immédiat
   console.log("Déconnecté du serveur. Raison :", reason);
 });
 
@@ -54,7 +85,7 @@ socket.on("reconnect_attempt", () => {
   statusIndicator.textContent = "⏳ Tentative de reconnexion...";
 });
 
-// 3. Écouteur des messages
+// Écouteur des messages
 socket.on("new_message", (data) => {
   console.log("Message reçu. ID expéditeur :", data.senderId, " | Mon ID :", socket.id);
 
@@ -68,7 +99,7 @@ socket.on("new_message", (data) => {
   }
 });
 
-// 4. Gestion de l'envoi
+//Gestion de l'envoi
 function handleSend() {
   const text = messageInput.value.trim();
   if (text) {
@@ -83,14 +114,14 @@ function handleSend() {
   }
 }
 
-// 5. Événements (Clic et Entrée)
+//Événements (Clic et Entrée)
 sendBtn.onclick = handleSend;
 
 messageInput.addEventListener("keypress", (e) => {
   if (e.key === "Enter") handleSend();
 });
 
-// 6. Ping (Pour tester)
+//Ping (Teste connexion)
 if(pingBtn) {
     pingBtn.addEventListener("click", () => {
       socket.emit("my_ping", { message: "Ping test" });

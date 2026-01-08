@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 3000;
 const wrap = (middleware) => (socket, next) =>
   middleware(socket.request, {}, next);
 // On force TypeORM à connaître nos deux entités : User (déjà là) et Message (nouveau)
-AppDataSource.setOptions({ entities: [require('./models/user.entity'), require('./models/message.entity')] });
+//AppDataSource.setOptions({ entities: [require('./models/user.entity'), require('./models/message.entity')] });
 AppDataSource.initialize()
   .then(() => {
     console.log("✅ Base de données connectée");
