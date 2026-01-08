@@ -1,22 +1,12 @@
-import { asyncHandler } from "../utils/asyncHandler";
-import ProductService from '../services/product.service';
+import { exportProducts } from '../services/product.service.js';
 
-class ProductController {
-    findall = asyncHandler(async (req, res) => {
-    const products = await this.productService.findAll();
-    res.json(products);
-    });
+export async function exportProductsController(req, res, next) {
+  try {
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename=products.csv');
 
-    create = asyncHandler(async (req, res) => {
-        const product = await this.productService.create(req.body);
-        res.status(201).json(product);
-    });
-
-    findById = asyncHandler(async (req, res) => {
-        const product = await this.productService.findById(req.params.id);
-        res.json(product);
-    });
-
+    await exportProducts(res);
+  } catch (e) {
+    next(e);
+  }
 }
-
- export default new ProductController();

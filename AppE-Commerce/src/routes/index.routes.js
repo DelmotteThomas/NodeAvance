@@ -1,12 +1,8 @@
-import express from 'express'
+import { Router } from 'express';
+import { exportProductsController } from '../controllers/product.controller.js';
 
+const router = Router();
 
-const ecommerceRouter = express.Router();
+router.get('/products/export', exportProductsController);
 
-app.use(express.json());
-
-ecommerceRouter.get('/', (req, res) =>{
-    res.json({status : 'ok'});
-});
-
-export default ecommerceRouter;
+export default router;
