@@ -1,6 +1,10 @@
 import { Readable } from 'stream';
 import { pipeline } from 'stream/promises';
 import { stringify } from 'csv-stringify';
+import csv from 'csv-parser';
+import ProductBatchInsertWritable from "../streams/productBatchInsertWritable.js";
+import ProductValidationTransform from "../streams/productValidationTransform.js";
+
 
 import AppDataSource from '../config/db.config.js';
 
@@ -47,4 +51,24 @@ export async function exportProducts(res) {
     }),
     res
   );
+}
+
+/**
+ * IMPORT CSV → DB
+ * @param {Readable} inputStream (req)
+ */
+export async function importProducts(inputStream) {
+  const validationTransform = new ProductValidationTransform();
+  const batchInsertWritable = new ProductBatchInsertWritable({ batchSize: 500 });
+
+  console.log('Démarrage du pipeline d’import');
+
+  await pipeline(
+    inputStream,          // req
+    csv(),                // CSV → objets JS
+    validationTransform,  // nettoyage + validation
+    batchInsertWritable   // batch insert DB
+  );
+
+  console.log('Import terminé');
 }

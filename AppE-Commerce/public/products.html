@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Import / Export Produits</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+
+  <div class="bg-white shadow-lg rounded-lg p-8 w-full max-w-lg">
+    <h1 class="text-2xl font-bold mb-6 text-center">
+      Gestion des Produits
+    </h1>
+
+    <!-- IMPORT -->
+    <section class="mb-8">
+      <h2 class="text-lg font-semibold mb-2 text-right">📥 Import CSV</h2>
+
+      <form
+        action="/products/import"
+        method="post"
+        enctype="application/octet-stream"
+        class="space-y-6"
+      >
+        <input
+          type="file"
+          name="file"
+          accept=".csv"
+          class="block w-full text-sm text-gray-600"
+        />
+
+        <button
+          type="submit"
+          class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+        >
+          Importer le fichier CSV
+        </button>
+      </form>
+
+      <p class="text-xs text-gray-500 mt-2">
+        
+      </p>
+    </section>
+
+    <!-- EXPORT -->
+    <section>
+      <h2 class="text-lg font-semibold mb-2">📤 Export CSV</h2>
+
+      <a
+        href="/products/export"
+        class="block text-center bg-green-600 text-white py-2 rounded hover:bg-green-700 transition"
+      >
+        Télécharger les produits
+      </a>
+    </section>
+  </div>
+
+</body>
+</html>
