@@ -24,7 +24,7 @@ export default class ProductBatchInsertWritable extends Writable {
     if (this.batch.length >= this.batchSize) {
       try {
         console.log(
-          `⚡ Buffer plein (${this.batch.length} items). Écriture en base...`
+          `Buffer plein (${this.batch.length} items). Écriture en base.`
         );
 
         //  Backpressure ici : on attend l'INSERT
@@ -45,7 +45,7 @@ export default class ProductBatchInsertWritable extends Writable {
   // ex 125/1000 données avec batchSize = 1000
   async _final(callback) {
     try {
-      console.log('🏁 Fin du flux. Écriture des derniers éléments...');
+      console.log('🏁 Fin du flux. Écriture du ou des dernier(s) élément(s)');
 
       // 3 Écriture des restes
       if (this.batch.length > 0) {
