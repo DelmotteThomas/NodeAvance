@@ -59,6 +59,9 @@ zod :
 https://www.npmjs.com/package/zod
 https://zod.dev/
 
+Puppeteer :
+https://pptr.dev/
+
 AUDIT pour tester les librairies :
 
 https://docs.npmjs.com/cli/v9/commands/npm-audit
