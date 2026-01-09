@@ -1,0 +1,5 @@
+name,price,stock,description,isArchived
+ Café ,2.5,10, 'Boisson chaude' ,false
+ Thé ,bad,5, 'Infusion' ,false
+ Jus ,3.2,-4, 'Jus frais' ,true
+ Eau ,1.0,abc, 'Eau plate' ,false
