@@ -11,8 +11,8 @@ app.use(express.json());
 app.use(logger);
 
 
-app.use('/', heavyRoutes);
-app.use('/', healthRoutes);
+app.use('/api/', heavyRoutes);
+app.use('/api/', healthRoutes);
 
 app.use(errorHandler);
 

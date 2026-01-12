@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 // Route légère (non bloquante)
-router.get('/api/health', (req, res) => {
+router.get('/health', (req, res) => {
   res.json({
     status: 'ok',
     pid: process.pid,

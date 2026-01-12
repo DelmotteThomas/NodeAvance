@@ -1,3 +1,5 @@
+const HeavyComputationService = require('../services/heavyComputation.service');
+
 class HeavyComputationController {
   static async blockingTask(req, res) {
     console.log(`[${process.pid}] Début de la tâche bloquante...`);
@@ -20,5 +22,23 @@ class HeavyComputationController {
       message: "Tâche terminée",
     });
   }
+   static async heavyTaskWorker(req, res) {
+    console.log(`[${process.pid}] Lancement calcul via Worker Thread`);
+
+    try {
+      const result = await HeavyComputationService.runHeavyTask();
+
+      return res.json({
+        message: 'Heavy computation completed (non-blocking)',
+        ...result,
+      });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({
+        error: err.message,
+      });
+    }
+  }
 }
+
 module.exports = HeavyComputationController;
