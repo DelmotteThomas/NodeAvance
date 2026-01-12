@@ -1,4 +1,5 @@
-const HeavyComputationService = require('../services/heavyComputation.service');
+const HeavyComputationService = require("../services/heavyComputation.service");
+const HeavyComputationPoolService = require("../services/heavyComputation.pool.service");
 
 class HeavyComputationController {
   static async blockingTask(req, res) {
@@ -18,7 +19,7 @@ class HeavyComputationController {
     return res.json({
       pid: process.pid,
       duration,
-      message: 'Tâche terminée',
+      message: "Tâche terminée",
     });
   }
 
@@ -29,14 +30,30 @@ class HeavyComputationController {
       const result = await HeavyComputationService.runHeavyTask();
 
       return res.json({
-        status: 'success',
-        mode: 'Délégation à un worker pour tâche lourde',
+        status: "success",
+        mode: "Délégation à un worker pour tâche lourde",
         pid: process.pid,
         ...result,
       });
     } catch (err) {
       console.error(err);
       return res.status(500).json({ error: err.message });
+    }
+  }
+
+  static async heavyTaskPool(req, res) {
+    try {
+      const result =
+        await HeavyComputationPoolService.runHeavyTask();
+
+      res.json({
+        status: 'success',
+        mode: 'worker pool (piscina)',
+        pid: process.pid,
+        ...result
+      });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
 }
