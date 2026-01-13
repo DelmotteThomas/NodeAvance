@@ -1,4 +1,4 @@
-const BaseRepository = require("./BaseController");
+const BaseRepository = require("./base-controller");
 
 class BaseService {
  /**
