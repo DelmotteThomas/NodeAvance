@@ -1,5 +1,8 @@
 const bcrypt = require('bcryptjs');
-const { ValidationError, ApiError } = require('../errors/api-error');
+const {
+  ValidationError,
+  ApiError,
+} = require('../errors/api-error');
 
 class AuthService {
   constructor(userRepository) {
@@ -8,12 +11,12 @@ class AuthService {
 
   async register(username, password) {
     if (!username || !password) {
-      throw new Error('Username et password requis');
+      throw new ValidationError('Username et password requis');
     }
 
     const existingUser = await this.userRepository.findByUsername(username);
     if (existingUser) {
-      throw new Error('Username déjà pris');
+      throw new ApiError(409, 'Username déjà pris');
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -23,7 +26,10 @@ class AuthService {
       password: hashedPassword,
     });
 
-    return { id: user.id, username: user.username };
+    return {
+      id: user.id,
+      username: user.username,
+    };
   }
 
   async validateUser(username, password) {
