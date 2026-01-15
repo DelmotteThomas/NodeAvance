@@ -1,10 +1,10 @@
 const { DataSource } = require('typeorm');
 
-// const UserEntity = require('../models/user.entity');
-// const TicketEntity = require('../models/ticket.entity');
-// const TagEntity = require('../models/tag.entity');
-// const MessageEntity = require('../models/message.entity');
-// const PostEntity = require('../models/post.entity');
+ const UserEntity = require('../models/user.entity');
+ const TicketEntity = require('../models/ticket.entity');
+ const TagEntity = require('../models/tag.entity');
+ const MessageEntity = require('../models/message.entity');
+ const PostEntity = require('../models/post.entity');
 
 
 const AppDataSource = new DataSource({

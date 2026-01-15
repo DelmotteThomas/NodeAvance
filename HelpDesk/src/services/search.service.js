@@ -11,12 +11,10 @@ class SearchService {
    */
   async initIndex() {
     try {
-      const exists = await client.indices.exists({
-        index: this.index,
-      });
+      const exists = await client.indices.exists({ index: this.index });
 
       if (exists) {
-        console.log(`[ELASTIC] Index '${this.index}' existe déjà`);
+        console.log(`[ELASTIC] L'index '${this.index}' existe déjà.`);
         return;
       }
 
@@ -25,21 +23,27 @@ class SearchService {
         body: {
           mappings: {
             properties: {
-              title: { type: "text" },
+              // 🔥 MULTI-FIELD
+              title: {
+                type: "text",
+                fields: {
+                  raw: { type: "keyword" }, // pour le tri
+                },
+              },
               content: { type: "text" },
               tags: { type: "keyword" },
               created_at: { type: "date" },
+
+              // 🔥 AUTOCOMPLÉTION (préparation)
+              suggest: { type: "completion" },
             },
           },
         },
       });
 
-      console.log(`[ELASTIC] Index '${this.index}' créé avec succès`);
+      console.log(`[ELASTIC] Index '${this.index}' créé avec succès.`);
     } catch (error) {
-      console.error(
-        "[ELASTIC] Erreur lors de l'initialisation de l'index :",
-        error.message
-      );
+      console.error("[ELASTIC] Erreur initIndex :", error.message);
     }
   }
 
@@ -51,7 +55,7 @@ class SearchService {
     if (!posts || posts.length === 0) return;
 
     try {
-      // ✅ FORMAT OFFICIEL TP
+      //  FORMAT OFFICIEL TP
       const operations = posts.flatMap((post) => [
         {
           index: {
@@ -64,6 +68,10 @@ class SearchService {
           content: post.content,
           tags: post.tags,
           created_at: post.created_at,
+
+          suggest: {
+            input: post.title.split(" "),
+          },
         },
       ]);
 
