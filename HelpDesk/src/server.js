@@ -1,5 +1,7 @@
 require("reflect-metadata");
 require("dotenv").config();
+const elasticClient = require("./config/elastic");
+const SearchService = require('./services/search.service');
 
 const http = require("http");
 const passport = require("passport");
@@ -17,8 +19,10 @@ const wrap = (middleware) => (socket, next) =>
 // On force TypeORM à connaître nos deux entités : User (déjà là) et Message (nouveau)
 //AppDataSource.setOptions({ entities: [require('./models/user.entity'), require('./models/message.entity')] });
 AppDataSource.initialize()
-  .then(() => {
-    console.log("✅ Base de données connectée");
+  .then(async() => {
+     // 🔍 INITIALISATION ELASTIC INDEX
+    const searchService = new SearchService();
+    searchService.initIndex(); // PAS de await 
 
     const server = http.createServer(app);
 

@@ -3,6 +3,8 @@
 Ce document décrit **comment tester un backend** sans frontend, en utilisant **curl**  
 → méthode recommandée pour valider les routes, les statuts HTTP et la configuration serveur.
 
++ Ajout des commandes et aides pour les projets backend.
+
 ---
 
 ## 🔧 Outil utilisé : `curl - PostMan` , `nodemon` , `dotenv`,  `dotreflect-metadatanv`, `typeorm`, 
@@ -43,6 +45,22 @@ chmod +x init-mvc.sh --> Donné les droits d'acces au fichier
 npm audit
 npm audit fix
 ```
+### 📌 Aide - CMD utile 
+
+```bash
+
+docker compose config
+docker compose logs -f app
+docker compose ps
+docker compose restart app
+
+```
+Principe de docker si on ne change pas .env / yml 
+un simple restart sur le service modifié suffit.
+Ex: redemarrer que le service app les autres continue de tourner. Gain de temps
+
+De plus si nodemon est en script DEV et le fichier DockerFile contient le tableau de CMD
+['npm','run', 'dev'] --> Reload automatique a chaque sauvegarde
 
 ### 📌 Lien utile 
 

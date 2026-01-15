@@ -1,6 +1,7 @@
 // --- Dépendances ---
 // Utilisation des fichier . env
 require('dotenv').config();
+
 // serveur
 const express = require('express');
 // Gerer l'authentification
@@ -50,6 +51,8 @@ const authRoutes = require('./routes/auth.routes');
 const ticketRoutes = require('./routes/ticket.routes');
 const statsRoutes = require('./routes/stats.routes');
 const chatRoutes = require('./routes/chat.routes');
+const searchRoutes = require('./routes/search.routes');
+
 
 // --- Import des Middlewares ---
 const logger = require('./middlewares/logger.middleware');
@@ -102,6 +105,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/messages', chatRoutes);
+app.use('/api/search',searchRoutes);
 
 // Route temporaire pour tester 
 
