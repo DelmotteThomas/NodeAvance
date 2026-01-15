@@ -34,7 +34,7 @@ class SearchController {
    */
   search = async (req, res) => {
     try {
-      const { q } = req.query;
+      const { q, sort, page, limit } = req.query;
 
       // Validation basique
       if (!q || q.length < 2) {
@@ -44,18 +44,57 @@ class SearchController {
       }
 
       console.log(`[SEARCH] Recherche pour : "${q}"`);
-
-      const results = await this.searchService.searchPosts(q);
+      const pageNumber = Math.max(parseInt(page) || 1, 1);
+      const limitNumber = Math.min(parseInt(limit) || 10, 50);
+      const { total, results } = await this.searchService.searchPosts(
+        q,
+        pageNumber,
+        sort,
+        limitNumber
+      );
 
       res.json({
         query: q,
+        sort: sort || "score",
         count: results.length,
+        pagination: {
+          page: pageNumber,
+          limit: limitNumber,
+          total,
+          totalPages: Math.ceil(total / limitNumber),
+        },
         results,
       });
     } catch (error) {
       console.error(error);
       res.status(500).json({
         error: "Erreur serveur lors de la recherche",
+      });
+    }
+  };
+
+  /**
+   * GET /api/search/suggest?q=...
+   * Autocomplétion basée sur Elasticsearch (completion suggester)
+   */
+  suggest = async (req, res) => {
+    try {
+      const { q } = req.query;
+
+      // Validation basique
+      if (!q || q.length < 2) {
+        return res.json([]);
+      }
+
+      console.log(`[SUGGEST] Autocomplétion pour : "${q}"`);
+
+      const suggestions = await this.searchService.suggestTitles(q);
+
+      res.json(suggestions);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        error: "Erreur serveur lors de la suggestion",
       });
     }
   };

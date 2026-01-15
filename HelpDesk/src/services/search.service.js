@@ -21,9 +21,18 @@ class SearchService {
       await client.indices.create({
         index: this.index,
         body: {
+          settings: {
+            analysis: {
+              analyzer: {
+                french_analyzer: {
+                  type: "french",
+                },
+              },
+            },
+          },
           mappings: {
             properties: {
-              // 🔥 MULTI-FIELD
+              //  MULTI-FIELD
               title: {
                 type: "text",
                 fields: {
@@ -34,7 +43,7 @@ class SearchService {
               tags: { type: "keyword" },
               created_at: { type: "date" },
 
-              // 🔥 AUTOCOMPLÉTION (préparation)
+              //  AUTOCOMPLÉTION (préparation)
               suggest: { type: "completion" },
             },
           },
@@ -90,34 +99,84 @@ class SearchService {
     }
   }
 
-  /**
-   * Effectue une recherche Full Text sur les articles.
-   * @param {string} query - Terme recherché
-   * @returns {Array}
-   */
-  async searchPosts(query) {
+  async searchPosts(query, page = 1, sort = "score", limit = 10) {
     try {
+      const sortOptions = {
+        score: [{ _score: "desc" }],
+        title: [{ "title.raw": "asc" }],
+        date: [{ created_at: "desc" }],
+      };
+
+      const from = (page - 1) * limit;
+
       const result = await client.search({
         index: this.index,
         body: {
+          from, // 🔹 pagination
+          size: limit, // 🔹 limite
           query: {
             multi_match: {
-              query: query,
-              fields: ["title^3", "content"], // boost titre
-              fuzziness: "AUTO", // tolérance fautes
+              query,
+              fields: ["title^3", "content"],
+              fuzziness: "AUTO",
+            },
+          },
+          sort: sortOptions[sort] || sortOptions.score,
+
+          highlight: {
+            pre_tags: ["<mark>"],
+            post_tags: ["</mark>"],
+            fields: {
+              title: {},
+              content: {},
             },
           },
         },
       });
 
-      // Nettoyage de la réponse Elastic
-      return result.hits.hits.map((hit) => ({
-        id: hit._id,
-        score: hit._score,
-        ...hit._source,
+      return {
+        total: result.hits.total.value,
+        results: result.hits.hits.map((hit) => ({
+          id: hit._id,
+          score: hit._score,
+          ...hit._source,
+
+          highlight: hit.highlight || {},
+        })),
+      };
+    } catch (error) {
+      console.error("❌ Erreur searchPosts :", error.message);
+      return { total: 0, results: [] };
+    }
+  }
+
+  /**
+   * Autocomplétion des titres (completion suggester)
+   * @param {string} prefix
+   */
+  async suggestTitles(prefix) {
+    try {
+      const result = await client.search({
+        index: this.index,
+        body: {
+          suggest: {
+            post_suggest: {
+              prefix,
+              completion: {
+                field: "suggest",
+                size: 5,
+              },
+            },
+          },
+        },
+      });
+
+      return result.suggest.post_suggest[0].options.map((opt) => ({
+        text: opt.text,
+        score: opt._score,
       }));
     } catch (error) {
-      console.error("❌ Erreur de recherche Elastic :", error.message);
+      console.error("❌ Erreur suggestTitles :", error.message);
       return [];
     }
   }
