@@ -1,8 +1,8 @@
-const client = require('../config/elastic');
+const client = require("../config/elastic");
 
 class SearchService {
   constructor() {
-    this.index = 'posts';
+    this.index = "posts";
   }
 
   /**
@@ -25,10 +25,10 @@ class SearchService {
         body: {
           mappings: {
             properties: {
-              title: { type: 'text' },
-              content: { type: 'text' },
-              tags: { type: 'keyword' },
-              created_at: { type: 'date' },
+              title: { type: "text" },
+              content: { type: "text" },
+              tags: { type: "keyword" },
+              created_at: { type: "date" },
             },
           },
         },
@@ -52,7 +52,7 @@ class SearchService {
 
     try {
       // ✅ FORMAT OFFICIEL TP
-      const operations = posts.flatMap(post => [
+      const operations = posts.flatMap((post) => [
         {
           index: {
             _index: this.index,
@@ -73,17 +73,44 @@ class SearchService {
       });
 
       if (bulkResponse.errors) {
-        console.error('[ELASTIC] Erreurs lors du Bulk');
+        console.error("[ELASTIC] Erreurs lors du Bulk");
       } else {
-        console.log(
-          `🚀 Bulk success : ${posts.length} documents indexés.`
-        );
+        console.log(`🚀 Bulk success : ${posts.length} documents indexés.`);
       }
     } catch (error) {
-      console.error(
-        '[ELASTIC] Erreur critique Bulk :',
-        error.message
-      );
+      console.error("[ELASTIC] Erreur critique Bulk :", error.message);
+    }
+  }
+
+  /**
+   * Effectue une recherche Full Text sur les articles.
+   * @param {string} query - Terme recherché
+   * @returns {Array}
+   */
+  async searchPosts(query) {
+    try {
+      const result = await client.search({
+        index: this.index,
+        body: {
+          query: {
+            multi_match: {
+              query: query,
+              fields: ["title^3", "content"], // boost titre
+              fuzziness: "AUTO", // tolérance fautes
+            },
+          },
+        },
+      });
+
+      // Nettoyage de la réponse Elastic
+      return result.hits.hits.map((hit) => ({
+        id: hit._id,
+        score: hit._score,
+        ...hit._source,
+      }));
+    } catch (error) {
+      console.error("❌ Erreur de recherche Elastic :", error.message);
+      return [];
     }
   }
 }

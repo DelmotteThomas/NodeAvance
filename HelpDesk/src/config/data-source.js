@@ -19,12 +19,12 @@ const AppDataSource = new DataSource({
   logging: true,
 
   entities: [
-    // UserEntity,
-    // TagEntity,
-    // TicketEntity,
-    // MessageEntity,
-    // PostEntity
-    'src/models/**/*.js'
+    UserEntity,
+    TagEntity,
+    TicketEntity,
+    MessageEntity,
+    PostEntity
+    
   ],
 });
 
